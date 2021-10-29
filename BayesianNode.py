@@ -1,0 +1,2 @@
+class BayesianNode:
+    pass
