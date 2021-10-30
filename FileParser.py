@@ -47,7 +47,6 @@ class FileParser:
         end = block.index("}")
         return block[start:end].replace(",", "").split()
 
-
     def parseProbabilites(self, blocks):
         for block in blocks:
-            for =
+            pass
