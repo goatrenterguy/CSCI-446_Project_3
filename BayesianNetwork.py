@@ -7,7 +7,7 @@ class BayesianNetwork:
         self.name = Name
 
     def addNode(self, node):
-        pass
+        self.network[node.name] = node
 
     def getNode(self, name):
         pass
