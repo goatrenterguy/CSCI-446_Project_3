@@ -26,8 +26,6 @@ class Main:
         #     self.selectionPrompt()
 
 
-
-
 if __name__ == "__main__":
     main = Main()
     main.selectionPrompt()
