@@ -10,3 +10,11 @@ class Probability:
     def __init__(self):
         variable = ""
         evidence = []
+
+
+class Sample:
+    def __init__(self):
+        nodes = dict()
+
+    def addNode(self, variable, value):
+        nodes.add(variable, value)
