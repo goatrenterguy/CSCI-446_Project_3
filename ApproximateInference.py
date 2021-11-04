@@ -21,7 +21,7 @@ class ApproximateInference:
             # gather children of current nodes
             nextLevel = {}
             for node in currentLevel:
-                for child in node.children
+                for child in node.children:
                     nextLevel.add(child)
             # break if there are no children
             if len(nextLevel) == 0:
