@@ -61,14 +61,15 @@ class FileParser:
                 self.bayesNet.getNode(var).children = children
             probabilities = self.parseProbabilityValues(block[end + 1:])
             if "table" in probabilities:
-                probabilities[node.states] = probabilities[tuple("table")]
+                values = probabilities["table"]
+                probabilities = {tuple(node.states): values}
             node.setProbability(probabilities)
 
     @staticmethod
     def parseProbabilityValues(block):
         probabilities = {}
         if "table" in block:
-            current = block[:-1].replace(",", "").split()
+            current = block[2:-3].replace(",", "").split()
             probabilities[current[0]] = current[1:]
         else:
             start = block.index("(")

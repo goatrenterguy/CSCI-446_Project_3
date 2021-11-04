@@ -1,3 +1,8 @@
+from random import random
+from BayesianNetwork import BayesianNetwork
+from Objects import Sample
+
+
 class ApproximateInference:
     def gibbsAsk(self, X, e, bnet: BayesianNetwork, N):
         # --- Create first sample ---
