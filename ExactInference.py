@@ -14,20 +14,22 @@ class ExactInference:
         return self.normalize(self.pointWiseProduct(factors, BNet))
 
     def pointWiseProduct(self, factors, BNet):
-        while len(factors) > 1:
-            f = factors.pop(-1)
-            cpt = {}
-            for v in f.variables:
-                for o in factors:
-                    if o != f and v in o.variables:
+        cpt = {}
+        matchingVariables = []
+        if len(factors) > 1:
+            for f in range(len(factors)):
+                for o in range(f, len(factors)):
+                    for fv in range(len(factors[f].variables)):
+                        for ov in range(len(factors[o].variables)):
+                            if o.variables[ov] == f.variables[fv]:
+                                matchingVariables.append((fv, ov))
                         variables = f.variables + [X for X in o.variables if X not in f.variables]
                         # TODO: Figure out how to merge where the value that the two factors have in common
                         #  have the same state need to be multiplied by that probability
                         # cpt[o.probabilities]
+                        # Index of v in f
+                        # Index of v in o
         return factors
-
-
-
 
     def sumOut(self, var, factors, BNet):
         keep = []
@@ -58,5 +60,8 @@ class ExactInference:
             variables.append(var)
         for p in node.probabilities:
             for i in range(len(node.states)):
-                cpt[(p,) + (node.states[i],)] = node.probabilities[p][i]
+                if p == "table":
+                    cpt[(node.states[i],)] = float(node.probabilities[p][i])
+                else:
+                    cpt[p + (node.states[i],)] = float(node.probabilities[p][i])
         return Factor(variables, cpt)
