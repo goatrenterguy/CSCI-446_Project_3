@@ -4,7 +4,7 @@ from Objects import Sample
 
 
 class ApproximateInference:
-    def gibbsAsk(self, X, e, bnet: BayesianNetwork, N):
+    def gibbsAsk(self, X, e, bnet: BayesianNetwork):
         # --- Create first sample ---
         sample = Sample()
         currentLevel = {}

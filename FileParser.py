@@ -17,6 +17,7 @@ class FileParser:
         probabilityBlocks = self.getBlocks("probability")
         self.parseVariables(variableBlocks)
         self.parseProbabilities(probabilityBlocks)
+        return self.bayesNet
 
     def getNetworkBlock(self):
         start = self.bif.index("network")
@@ -60,9 +61,9 @@ class FileParser:
                 children.append(node.name)
                 self.bayesNet.getNode(var).children = children
             probabilities = self.parseProbabilityValues(block[end + 1:])
-            if "table" in probabilities:
-                values = probabilities["table"]
-                probabilities = {tuple(node.states): values}
+            # if "table" in probabilities:
+            #     values = probabilities["table"]
+            #     probabilities = {tuple(node.states): values}
             node.setProbability(probabilities)
 
     @staticmethod

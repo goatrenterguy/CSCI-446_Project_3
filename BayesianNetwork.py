@@ -14,3 +14,6 @@ class BayesianNetwork:
 
     def getNode(self, name) -> BNode:
         return self.network[name]
+
+    def getVariables(self) -> list:
+        return list(self.network.keys())

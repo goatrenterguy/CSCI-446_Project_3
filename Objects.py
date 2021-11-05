@@ -1,9 +1,8 @@
-class Factor:
-    def __init__(self):
-        probabilities = []
 
-    def makeFactor(self, var, evidence):
-        pass
+class Factor:
+    def __init__(self, variables, cpt):
+        self.variables = variables
+        self.cpt = cpt
 
 
 class Probability:
@@ -14,7 +13,7 @@ class Probability:
 
 class Sample:
     def __init__(self):
-        nodes = dict()
+        self.nodes = dict()
 
     def addNode(self, variable, value):
-        nodes.add(variable, value)
+        self.nodes.add(variable, value)

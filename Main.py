@@ -1,5 +1,5 @@
 from FileParser import FileParser as FP
-import ExactInference
+from ExactInference import ExactInference
 import ApproximateInference
 
 
@@ -19,8 +19,10 @@ class Main:
         selection = input().upper()
         # try:
         filePath = "Networks/" + self.selectionKey[selection].lower() + ".bif"
-        self.fileParser.readFile(filePath)
+        BNet = self.fileParser.readFile(filePath)
         print("File: " + filePath + " opened")
+        ExactInference().eliminationAsk(X='HYPOVOLEMIA', e={"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH"}, BNet=BNet)
+
         # except:
         #     print("Invalid selection please try again\n+---------------------------+\n")
         #     self.selectionPrompt()
