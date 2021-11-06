@@ -12,7 +12,7 @@ class ExactInference:
             factors.append(self.makeFactor(var, e, BNet))
             if var != X and var not in e:
                 factors = self.sumOut(var, factors, BNet)
-        return self.normalize(self.pointWiseProduct(factors, BNet))
+        return self.pointWiseProduct(factors)
 
     def matchingVariables(self, f1, f2):
         matchingVariables = []
@@ -22,7 +22,7 @@ class ExactInference:
                     matchingVariables.append((fv, ov))
         return matchingVariables
 
-    def pointWiseProduct(self, factors, BNet):
+    def pointWiseProduct(self, factors):
         for f1 in factors:
             for f2 in factors[1:]:
                 matchingVariables = self.matchingVariables(f1, f2)
@@ -42,7 +42,7 @@ class ExactInference:
                                     cpt[key] = f1.cpt[pf] * f2.cpt[po]
                     factors.append(Factor(variables, cpt))
                     break
-        return factors
+        return Factor(factors[0].variables, factors[0].cpt)
 
     def sumOut(self, var, factors, BNet):
         keep = []
@@ -52,6 +52,30 @@ class ExactInference:
                 varInFactor.append(f)
             else:
                 keep.append(f)
+        factored = self.pointWiseProduct(varInFactor)
+        if factored and len(factored.variables) > 1:
+            # Get index of var
+            indexVar = factored.variables.index(var)
+            cpt = {}
+            for k1 in factored.cpt:
+                for k2 in factored.cpt:
+                    if k1 != k2:
+                        match = True
+                        for i in range(len(factored.variables)):
+                            if i != indexVar and k1[i] != k2[i]:
+                                match = False
+                        if match:
+                            key = []
+                            for val in range(len(k1)):
+                                if val != indexVar:
+                                    key.append(k1[val])
+                            if tuple(key) in cpt:
+                                cpt[tuple(key)] = cpt[tuple(key)] + factored.cpt[k2]
+                            else:
+                                cpt[tuple(key)] = factored.cpt[k1] + factored.cpt[k2]
+                            break
+            factored.variables.remove(var)
+            keep.append(Factor(factored.variables, cpt))
         return keep
 
     def normalize(self, factor):
@@ -65,10 +89,8 @@ class ExactInference:
 
     def makeFactor(self, var, evidence, BNet: BayesianNetwork):
         node = BNet.getNode(var)
-        variables = node.parents
+        variables = node.parents + [node.name]
         cpt = {}
-        if var not in evidence:
-            variables.append(var)
         for p in node.probabilities:
             for i in range(len(node.states)):
                 if p == "table":

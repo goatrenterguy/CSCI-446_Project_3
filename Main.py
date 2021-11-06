@@ -21,7 +21,9 @@ class Main:
         filePath = "Networks/" + self.selectionKey[selection].lower() + ".bif"
         BNet = self.fileParser.readFile(filePath)
         print("File: " + filePath + " opened")
-        print(ExactInference().eliminationAsk(X='HYPOVOLEMIA', e={"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH"}, BNet=BNet))
+        factor = ExactInference().eliminationAsk(X='HYPOVOLEMIA', e={"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH"}, BNet=BNet)
+        print(factor.variables)
+        print(factor.cpt)
 
         # except:
         #     print("Invalid selection please try again\n+---------------------------+\n")
