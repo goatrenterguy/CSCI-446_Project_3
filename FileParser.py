@@ -2,7 +2,7 @@ import re
 from BayesianNetwork import BayesianNetwork as BNet
 from BayesianNode import BayesianNode as BNode
 
-# TODO: Fix file parser adding 'table' to the probability table when a node has no parents
+
 class FileParser:
     def __init__(self):
         self.bayesNet = BNet()
@@ -87,4 +87,3 @@ class FileParser:
                 start = block.find("(", end)
                 end = block.find(";\n", start)
         return probabilities
-

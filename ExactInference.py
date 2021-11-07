@@ -1,6 +1,4 @@
 import random
-from functools import reduce
-
 from Objects import *
 from BayesianNetwork import BayesianNetwork
 
@@ -9,19 +7,11 @@ class ExactInference:
     def eliminationAsk(self, X, e, BNet: BayesianNetwork):
         factors = []
         for var in BNet.getVariables():
-                factors.append(self.makeFactor(var, e, BNet))
-        for var in self.order(BNet.getVariables()):
+            factors.append(self.makeFactor(var, e, BNet))
+        for var in self.order(BNet.getVariables(), BNet):
             if var != X and var not in e:
-                factors = self.sumOut(var, factors)
+                factors = self.sumOut(var, factors, BNet)
         finalFactor = self.pointWiseProduct(factors)
-        cpt = finalFactor.cpt.copy()
-        for evidence in e:
-            index = finalFactor.variables.index(evidence)
-            for key in finalFactor.cpt:
-                if key[index] != e[evidence]:
-                    del cpt[key]
-            finalFactor.variables.remove(evidence)
-        finalFactor.cpt = cpt
         return self.normalize(finalFactor)
 
     def matchingVariables(self, f1, f2):
@@ -41,7 +31,12 @@ class ExactInference:
                 factors.remove(f1)
                 factors.remove(f2)
                 cpt = {}
-                variables = f1.variables + [X for X in f2.variables if X not in f1.variables]
+                if f1.name is not None:
+                    variables = f1.variables + [X for X in [str(f1.name)] + f2.variables if X not in f1.variables]
+                else:
+                    variables = f1.variables + [X for X in f2.variables if X not in f1.variables]
+                if f2.name not in variables and f2.name is not None:
+                    variables += [f2.name]
                 for pf in f1.cpt:
                     for po in f2.cpt:
                         for mv in matchingVariables:
@@ -51,10 +46,10 @@ class ExactInference:
                                     if a != mv[1]:
                                         key += (po[a],)
                                 cpt[key] = f1.cpt[pf] * f2.cpt[po]
-                factors.append(Factor("", variables, cpt))
-        return Factor(factors[0].name, factors[0].variables, factors[0].cpt)
+                factors.append(Factor(None, variables, cpt))
+        return Factor(None, factors[0].variables, factors[0].cpt)
 
-    def sumOut(self, var, factors):
+    def sumOut(self, var, factors, BNet):
         keep = []
         varInFactor = []
         for f in factors:
@@ -62,22 +57,26 @@ class ExactInference:
                 varInFactor.append(f)
             else:
                 keep.append(f)
-        if len(varInFactor) > 1:
+        if len(varInFactor) > 0:
             factored = self.pointWiseProduct(varInFactor)
             # Get index of var
             indexVar = factored.variables.index(var)
             cpt = {}
-            flagged = []
-            for k1 in factored.cpt:
-                for k2 in factored.cpt:
-                    if k1 != k2 and k2 not in flagged:
+            keys = list(factored.cpt.keys())
+            nodeStates = len(BNet.getNode(var).states)
+            # We know the states we could use the dict to look up the values... Generate all possible combos...
+            for k1i in range(len(keys)):
+                count = 0
+                for k2i in range(k1i, len(keys)):
+                    k1 = keys[k1i]
+                    k2 = keys[k2i]
+                    if k1 != k2:
                         match = True
                         for i in range(len(factored.variables)):
                             if i != indexVar and k1[i] != k2[i]:
                                 match = False
                         if match:
-                            flagged.append(k1)
-                            flagged.append(k2)
+                            count += 1
                             key = []
                             for val in range(len(k1)):
                                 if val != indexVar:
@@ -86,6 +85,8 @@ class ExactInference:
                                 cpt[tuple(key)] = cpt[tuple(key)] + factored.cpt[k2]
                             else:
                                 cpt[tuple(key)] = factored.cpt[k1] + factored.cpt[k2]
+                            if count == nodeStates:
+                                break
             factored.variables.remove(var)
             keep.append(Factor(factored.name, factored.variables, cpt))
         return keep
@@ -98,23 +99,34 @@ class ExactInference:
             factor.cpt[k] = factor.cpt[k] / sum
         return factor
 
-    def order(self, variables):
+    def order(self, variables, BNet):
         # Random order can change later
-        random.seed(1)
-        random.shuffle(variables)
-        return variables
+        # random.seed(1)
+        # random.shuffle(variables)
+        numParents = []
+        for v in variables:
+            numParents.append([v, len(BNet.getNode(v).children)])
+        numParents.sort(key=lambda x: x[1], reverse=False)
+        order = [v[0] for v in numParents]
+        return order
 
     def makeFactor(self, var, evidence, BNet: BayesianNetwork):
         node = BNet.getNode(var)
-        variables = node.parents
+
         name = var
-        if len(variables) == 0 or var not in evidence:
-            variables += [name]
+        variables = [X for X in node.parents + [var] if X not in evidence]
         cpt = {}
         for p in node.probabilities:
             for i in range(len(node.states)):
-                if p == "table":
-                    cpt[(node.states[i],)] = float(node.probabilities[p][i])
+                if var in evidence:
+                    if evidence[var] == node.states[i]:
+                        if p == "table":
+                            cpt[(node.states[i],)] = float(node.probabilities[p][i])
+                        else:
+                            cpt[p + (node.states[i],)] = float(node.probabilities[p][i])
                 else:
-                    cpt[p + (node.states[i],)] = float(node.probabilities[p][i])
+                    if p == "table":
+                        cpt[(node.states[i],)] = float(node.probabilities[p][i])
+                    else:
+                        cpt[p + (node.states[i],)] = float(node.probabilities[p][i])
         return Factor(name, variables, cpt)

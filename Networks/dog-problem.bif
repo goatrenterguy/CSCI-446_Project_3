@@ -1,13 +1,23 @@
 network "Dog-Problem" {
 }
+variable  light-on {
+	type discrete[ 2 ] {  true, false };
+}
 variable  bowel-problem {
 	type discrete[ 2 ] {  true,  false };
 }
 variable  dog-out {
 	type discrete[ 2 ] {  true,  false };
 }
+variable  hear-bark {
+	type discrete[ 2 ] {  true,  false };
+}
 variable  family-out {
 	type discrete[ 2 ] {  true,  false };
+}
+probability ( light-on | family-out ) {
+    (true) 0.6, 0.4;
+    (false) 0.05, 0.05;
 }
 probability ( bowel-problem ) {
 	table 0.01 0.99;
@@ -17,6 +27,10 @@ probability ( dog-out | bowel-problem,  family-out ) {
     (true, false) 0.97, 0.03;
     (false, true) 0.9, 0.1;
     (false, false) 0.3, 0.7;
+}
+probability ( hear-bark | dog-out ) {
+    (true) 0.7, .3;
+    (false) 0.01, 0.99;
 }
 probability ( family-out ) {
 	table 0.15 0.85;
