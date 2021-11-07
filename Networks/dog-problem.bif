@@ -1,0 +1,23 @@
+network "Dog-Problem" {
+}
+variable  bowel-problem {
+	type discrete[ 2 ] {  true,  false };
+}
+variable  dog-out {
+	type discrete[ 2 ] {  true,  false };
+}
+variable  family-out {
+	type discrete[ 2 ] {  true,  false };
+}
+probability ( bowel-problem ) {
+	table 0.01 0.99;
+}
+probability ( dog-out | bowel-problem,  family-out ) {
+    (true, true) 0.99, 0.01;
+    (true, false) 0.97, 0.03;
+    (false, true) 0.9, 0.1;
+    (false, false) 0.3, 0.7;
+}
+probability ( family-out ) {
+	table 0.15 0.85;
+}

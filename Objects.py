@@ -1,8 +1,9 @@
 
 class Factor:
-    def __init__(self, variables, cpt):
+    def __init__(self, name, variables, cpt):
         self.variables = variables
         self.cpt = cpt
+        self.name = name
 
 
 class Probability:
