@@ -100,9 +100,6 @@ class ExactInference:
         return factor
 
     def order(self, variables, BNet):
-        # Random order can change later
-        # random.seed(1)
-        # random.shuffle(variables)
         numParents = []
         for v in variables:
             numParents.append([v, len(BNet.getNode(v).children)])
@@ -112,7 +109,6 @@ class ExactInference:
 
     def makeFactor(self, var, evidence, BNet: BayesianNetwork):
         node = BNet.getNode(var)
-
         name = var
         variables = [X for X in node.parents + [var] if X not in evidence]
         cpt = {}
