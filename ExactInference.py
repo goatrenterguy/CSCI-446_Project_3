@@ -173,6 +173,11 @@ class ExactInference:
         return keep
 
     def normalize(self, factor):
+        """
+        Utility function to normalize probabilities
+        :param factor: A factor to be normalized
+        :return: The normalized factor
+        """
         total = 0
         for k in factor.cpt:
             total += factor.cpt[k]
