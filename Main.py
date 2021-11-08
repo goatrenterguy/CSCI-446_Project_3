@@ -1,6 +1,6 @@
 from FileParser import FileParser as FP
 from ExactInference import ExactInference
-import ApproximateInference
+from ApproximateInference import ApproximateInference
 
 
 class Main:
@@ -21,9 +21,12 @@ class Main:
         filePath = "Networks/" + self.selectionKey[selection].lower() + ".bif"
         BNet = self.fileParser.readFile(filePath)
         print("File: " + filePath + " opened")
-        factor = ExactInference().eliminationAsk(X='HYPOVOLEMIA', e={"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH"}, BNet=BNet)
-        print(factor.variables)
-        print(factor.cpt)
+        # factor = ExactInference().eliminationAsk(X='HYPOVOLEMIA', e={"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH"}, BNet=BNet)
+        sample_list = ApproximateInference().gibbsAsk(X=['HYPOVOLEMIA', 'LVFAILURE', 'ERRLOWOUTPUT'], e={"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH"}, bnet=BNet, n=100)
+        print(len(sample_list))
+        print(sample_list)
+        #print(factor.variables)
+        #print(factor.cpt)
 
         # except:
         #     print("Invalid selection please try again\n+---------------------------+\n")
