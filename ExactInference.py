@@ -219,28 +219,42 @@ class ExactInference:
         # Retrieve the node names var from BNet
         node = BNet.getNode(var)
         # Generate the list of all variables including the its self
-        variables = [X for X in node.parents + [var]]
+        pFor = [var]
+        e = node.parents
+        variables = [x for x in node.parents + [var]]
         cpt = {}
+        ignore = []
+        for v in range(len(e)):
+            if e[v] in evidence:
+                variables.pop(v)
+                ignore.append(v)
         # Iterate through the list of probabilities
         for p in node.probabilities:
             # Iterate through the number of states
             for i in range(len(node.states)):
-                # If var is in evidence
-                if var in evidence:
-                    # Only select the probabilities where the state matches what is in evidence
-                    if evidence[var] == node.states[i]:
+                key = [X for X in p]
+                take = True
+                for v in ignore:
+                    if key[v] != evidence[e[v]]:
+                        take = False
+                    key.pop(v)
+                if take:
+                    # If var is in evidence
+                    if var in evidence:
+                        # Only select the probabilities where the state matches what is in evidence
+                        if evidence[var] == node.states[i]:
+                            # If the probability contains table then replace it with the state of var
+                            if p == "table":
+                                cpt[(node.states[i],)] = float(node.probabilities[p][i])
+                            # If it does not add the state of the variable to the existing states
+                            else:
+                                cpt[tuple(key) + (node.states[i],)] = float(node.probabilities[p][i])
+                    else:
                         # If the probability contains table then replace it with the state of var
                         if p == "table":
                             cpt[(node.states[i],)] = float(node.probabilities[p][i])
                         # If it does not add the state of the variable to the existing states
                         else:
-                            cpt[p + (node.states[i],)] = float(node.probabilities[p][i])
-                else:
-                    # If the probability contains table then replace it with the state of var
-                    if p == "table":
-                        cpt[(node.states[i],)] = float(node.probabilities[p][i])
-                    # If it does not add the state of the variable to the existing states
-                    else:
-                        cpt[p + (node.states[i],)] = float(node.probabilities[p][i])
+                            cpt[tuple(key) + (node.states[i],)] = float(node.probabilities[p][i])
         # Return a new Factor
         return Factor(variables, cpt)
