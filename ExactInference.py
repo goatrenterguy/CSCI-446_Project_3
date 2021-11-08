@@ -24,6 +24,12 @@ class ExactInference:
                 factors = self.sumOut(var, factors, BNet)
         # Do one final point wise product to consolidate remaining factors that contain the evidence and query
         finalFactor = self.pointWiseProduct(factors)
+        cpt = {}
+        indexVar = finalFactor.variables.index(X)
+        for k in finalFactor.cpt:
+            kl = [X for X in k]
+            cpt[kl[indexVar]] = finalFactor.cpt[k]
+        finalFactor.cpt = cpt
         # Return the normalized form of the distribution
         return self.normalize(finalFactor)
 

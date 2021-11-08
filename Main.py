@@ -23,36 +23,56 @@ class Main:
         #    print("File: " + filePath + " opened")
         #    factor = ExactInference().eliminationAsk(X='HYPOVOLEMIA', e={"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH"}, BNet=BNet)
 
-        print('------------ ALARM NETWORK ------------')
-        BNet = self.fileParser.readFile('Networks/alarm.bif')
-        x = ['HYPOVOLEMIA', 'LVFAILURE', 'ERRLOWOUTPUT']
-        e = {"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH"}
-        alarm_le = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=400)
-        print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
-        print(str(alarm_le))
-        print()
-        x = ['HYPOVOLEMIA', 'LVFAILURE', 'ERRLOWOUTPUT']
-        e = {"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH", 'HRSAT': 'LOW', 'HREKG': 'LOW'}
-        alarm_me = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=400)
-        print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
-        print(str(alarm_me))
-        print()
+        # print('------------ ALARM NETWORK ------------')
+        # BNet = self.fileParser.readFile('Networks/alarm.bif')
+        # x = ['HYPOVOLEMIA', 'LVFAILURE', 'ERRLOWOUTPUT']
+        # e = {"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH"}
+        # alarm_le = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=400)
+        # print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
+        # print(str(alarm_le))
+        # print()
+        # for X in x:
+        #     print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+        #     factor = ExactInference().eliminationAsk(X, e, BNet)
+        #     print(factor.cpt)
+        #     print()
+        # x = ['HYPOVOLEMIA', 'LVFAILURE', 'ERRLOWOUTPUT']
+        # e = {"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH", 'HRSAT': 'LOW', 'HREKG': 'LOW'}
+        # alarm_me = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=400)
+        # print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
+        # print(str(alarm_me))
+        # print()
+        # for X in x:
+        #     print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+        #     factor = ExactInference().eliminationAsk(X, e, BNet)
+        #     print(factor.cpt)
+        #     print()
 
         print('------------ CHILD NETWORK ------------')
         BNet = self.fileParser.readFile('Networks/child.bif')
         x = ['Disease']
-        e = {'LowerBodyO2': '"<5"', 'RUQO2': '">=12"', 'CO2Report': '">=7.5"', 'XrayReport': 'Asy/Patchy'}
+        e = {'LowerBodyO2': '<5', 'RUQO2': '>=12', 'CO2Report': '>=7.5', 'XrayReport': 'Asy/Patchy'}
         child_le = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=1000)
         print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
         print(str(child_le))
         print()
+        for X in x:
+            print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+            factor = ExactInference().eliminationAsk(X, e, BNet)
+            print(factor.cpt)
+            print()
         x = ['Disease']
-        e = {'LowerBodyO2': '"<5"', 'RUQO2': '">=12"', 'CO2Report': '">=7.5"', 'XrayReport': 'Asy/Patchy',
-             'GruntingReport': 'Yes', 'LVHReport': 'Yes', 'Age': '"11-30 Days"'}
+        e = {'LowerBodyO2': '<5', 'RUQO2': '>=12', 'CO2Report': '>=7.5', 'XrayReport': 'Asy/Patchy',
+             'GruntingReport': 'Yes', 'LVHReport': 'Yes', 'Age': '11-30 Days'}
         child_me = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=1000)
         print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
         print(str(child_me))
         print()
+        for X in x:
+            print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+            factor = ExactInference().eliminationAsk(X, e, BNet)
+            print(factor.cpt)
+            print()
 
         print('------------ HAILFINDER NETWORK ------------')
         BNet = self.fileParser.readFile('Networks/hailfinder.bif')
@@ -62,6 +82,11 @@ class Main:
         print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
         print(str(hailfinder_le))
         print()
+        for X in x:
+            print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+            factor = ExactInference().eliminationAsk(X, e, BNet)
+            print(factor.cpt)
+            print()
         x = ['SatContMoist', 'LLIW']
         e = {'RSFest': 'XNIL', 'N32StarFest': 'XNIL', 'MountainFest': 'XNIL', 'AreaMoDryAir': 'VeryWet',
              'CombVerMo': 'Down', 'AreaMeso_ALS': 'Down', 'CurPropConv': 'Strong'}
@@ -69,6 +94,11 @@ class Main:
         print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
         print(str(hailfinder_me))
         print()
+        for X in x:
+            print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+            factor = ExactInference().eliminationAsk(X, e, BNet)
+            print(factor.cpt)
+            print()
 
         print('------------ INSURANCE NETWORK ------------')
         BNet = self.fileParser.readFile('Networks/insurance.bif')
@@ -78,6 +108,11 @@ class Main:
         print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
         print(str(insurance_le))
         print()
+        for X in x:
+            print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+            factor = ExactInference().eliminationAsk(X, e, BNet)
+            print(factor.cpt)
+            print()
         x = ['MedCost', 'ILiCost', 'PropCost']
         e = {'Age': 'Adolescent', 'GoodStudent': 'False', 'SeniorTrain': 'False', 'DrivQuality': 'Poor',
              'MakeModel': 'Luxury', 'CarValue': 'FiftyThou', 'DrivHistory': 'Zero'}
@@ -85,6 +120,11 @@ class Main:
         print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
         print(str(insurance_me))
         print()
+        for X in x:
+            print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+            factor = ExactInference().eliminationAsk(X, e, BNet)
+            print(factor.cpt)
+            print()
 
         print('------------ Win95 NETWORK ------------')
         BNet = self.fileParser.readFile('Networks/win95pts.bif')
@@ -94,47 +134,76 @@ class Main:
         print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
         print(str(win95_1))
         print()
+        for X in x:
+            print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+            factor = ExactInference().eliminationAsk(X, e, BNet)
+            print(factor.cpt)
+            print()
         x = ['Problem1', 'Problem2', 'Problem3', 'Problem4', 'Problem5', 'Problem6']
         e = {'Problem2': 'Too_Long'}
         win95_2 = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=1000)
         print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
         print(str(win95_2))
         print()
+        for X in x:
+            print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+            factor = ExactInference().eliminationAsk(X, e, BNet)
+            print(factor.cpt)
+            print()
         x = ['Problem1', 'Problem2', 'Problem3', 'Problem4', 'Problem5', 'Problem6']
         e = {'Problem3': 'No'}
         win95_3 = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=1000)
         print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
         print(str(win95_3))
         print()
+        for X in x:
+            print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+            factor = ExactInference().eliminationAsk(X, e, BNet)
+            print(factor.cpt)
+            print()
         x = ['Problem1', 'Problem2', 'Problem3', 'Problem4', 'Problem5', 'Problem6']
         e = {'Problem4': 'No'}
         win95_4 = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=1000)
         print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
         print(str(win95_4))
         print()
+        for X in x:
+            print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+            factor = ExactInference().eliminationAsk(X, e, BNet)
+            print(factor.cpt)
+            print()
         x = ['Problem1', 'Problem2', 'Problem3', 'Problem4', 'Problem5', 'Problem6']
         e = {'Problem5': 'No'}
         win95_5 = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=1000)
         print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
         print(str(win95_5))
         print()
+        for X in x:
+            print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+            factor = ExactInference().eliminationAsk(X, e, BNet)
+            print(factor.cpt)
+            print()
         x = ['Problem1', 'Problem2', 'Problem3', 'Problem4', 'Problem5', 'Problem6']
         e = {'Problem6': 'Yes'}
         win95_6 = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=1000)
         print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
         print(str(win95_6))
         print()
+        for X in x:
+            print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+            factor = ExactInference().eliminationAsk(X, e, BNet)
+            print(factor.cpt)
+            print()
 
 
 if __name__ == "__main__":
-    # main = Main()
-    # main.selectionPrompt()
+    Main().selectionPrompt()
     # bn = FileParser().readFile("Networks/dog-problem.bif")
     # factor = ExactInference().eliminationAsk(X='family-out', e={'hear-bark': 'true', 'light-on': 'true'}, BNet=bn)
-    BNet = FileParser().readFile("Networks/alarm.bif")
+    # BNet = FileParser().readFile("Networks/alarm.bif")
     # factor = ExactInference().eliminationAsk(X='HYPOVOLEMIA', e={'CO': 'LOW'}, BNet=BNet)
-    factor = ExactInference().eliminationAsk(X='ERRLOWOUTPUT', e={"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH"}, BNet=BNet)
-    print(factor.variables)
-    print(factor.cpt)
+    # factor = ExactInference().eliminationAsk(X='ERRLOWOUTPUT', e={"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH"}, BNet=BNet)
+    # print(factor.variables)
+    # print(factor.cpt)
 
 
