@@ -1,6 +1,8 @@
 
 class Factor:
-    def __init__(self, variables, cpt):
+    def __init__(self, variables, cpt, pFor=[], evidence=[]):
+        self.pFor = pFor
+        self.evidence = evidence
         self.variables = variables
         self.cpt = cpt
 

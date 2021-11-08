@@ -33,11 +33,12 @@ class Main:
 if __name__ == "__main__":
     # main = Main()
     # main.selectionPrompt()
-    # bn = FileParser().readFile("Networks/dog-problem.bif")
-    # factor = ExactInference().eliminationAsk(X='family-out', e={'hear-bark': 'true', 'light-on': 'true'}, BNet=bn)
-    BNet = FileParser().readFile("Networks/alarm.bif")
+    bn = FileParser().readFile("Networks/child.bif")
+    factor = ExactInference().eliminationAsk(X='BirthAsphyxia', e={'Disease': 'PFC'}, BNet=bn)
+    # factor = ExactInference().eliminationAsk(X='BirthAsphyxia', e={'CardiacMixing': 'None'}, BNet=bn)
+    # BNet = FileParser().readFile("Networks/alarm.bif")
     # factor = ExactInference().eliminationAsk(X='HYPOVOLEMIA', e={'CO': 'LOW'}, BNet=BNet)
-    factor = ExactInference().eliminationAsk(X='ERRLOWOUTPUT', e={"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH"}, BNet=BNet)
+    # factor = ExactInference().eliminationAsk(X='ERRLOWOUTPUT', e={"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH"}, BNet=BNet)
     print(factor.variables)
     print(factor.cpt)
 

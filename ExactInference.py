@@ -16,7 +16,7 @@ class ExactInference:
         factors = []
         # Loop to create all factors
         for var in BNet.getVariables():
-            factors.append(self.makeFactor(var, e, BNet))
+            factors.append(self.makeFactor(var, X, e, BNet))
         # Loop to eliminate factors based on the order
         for var in self.order(BNet.getVariables(), BNet):
             # If var is equal to the query or is in the evidence do not sum out
@@ -35,12 +35,20 @@ class ExactInference:
         :return: A list of indices for where f1 and f2 share a variable
         """
         matchingVariables = []
+        # if f1.pFor or f1.evidence:
+        # f1VariableList = f1.evidence + f1.pFor
+        # else:
+        f1VariableList = f1.variables
+        # if f2.pFor or f2.evidence:
+        #     f2VariableList = f2.evidence + f2.pFor
+        # else:
+        f2VariableList = f2.variables
         # Loop through f1's variables
-        for fv in range(len(f1.variables)):
+        for fv in range(len(f1VariableList)):
             # Loop through f2's variables
-            for ov in range(len(f2.variables)):
+            for ov in range(len(f2VariableList)):
                 # If they are equal then add the indices to matchingVariables
-                if f1.variables[fv] == f2.variables[ov]:
+                if f1VariableList[fv] == f2VariableList[ov]:
                     matchingVariables.append([fv, ov])
         # Return the list of matching variables
         return matchingVariables
@@ -56,6 +64,7 @@ class ExactInference:
             # Set the factors to merge
             f1 = factors[0]
             f2 = factors[1]
+
             # Get the matching factors between f1 and f2
             matchingVariables = self.matchingVariables(f1, f2)
             # If they have matching variables and they arnt equal to each other
@@ -169,7 +178,8 @@ class ExactInference:
                             if count == nodeStates:
                                 break
             factored.variables.remove(var)
-            keep.append(Factor(factored.variables, cpt))
+            if factored.variables:
+                keep.append(Factor(factored.variables, cpt))
         return keep
 
     def normalize(self, factor):
@@ -202,7 +212,7 @@ class ExactInference:
         # Return the list of names
         return order
 
-    def makeFactor(self, var, evidence, BNet: BayesianNetwork):
+    def makeFactor(self, var, X, evidence, BNet: BayesianNetwork):
         """
         Function to generate factors
         :param var: Name of node to generate factors for
@@ -213,28 +223,42 @@ class ExactInference:
         # Retrieve the node names var from BNet
         node = BNet.getNode(var)
         # Generate the list of all variables including the its self
-        variables = [X for X in node.parents + [var]]
+        pFor = [var]
+        e = node.parents
+        variables = [x for x in node.parents + [var]]
         cpt = {}
+        ignore = []
+        for v in range(len(e)):
+            if e[v] in evidence:
+                variables.pop(v)
+                ignore.append(v)
         # Iterate through the list of probabilities
         for p in node.probabilities:
             # Iterate through the number of states
             for i in range(len(node.states)):
-                # If var is in evidence
-                if var in evidence:
-                    # Only select the probabilities where the state matches what is in evidence
-                    if evidence[var] == node.states[i]:
+                key = [X for X in p]
+                take = True
+                for v in ignore:
+                    if key[v] != evidence[e[v]]:
+                        take = False
+                    key.pop(v)
+                if take:
+                    # If var is in evidence
+                    if var in evidence:
+                        # Only select the probabilities where the state matches what is in evidence
+                        if evidence[var] == node.states[i]:
+                            # If the probability contains table then replace it with the state of var
+                            if p == "table":
+                                cpt[(node.states[i],)] = float(node.probabilities[p][i])
+                            # If it does not add the state of the variable to the existing states
+                            else:
+                                cpt[tuple(key) + (node.states[i],)] = float(node.probabilities[p][i])
+                    else:
                         # If the probability contains table then replace it with the state of var
                         if p == "table":
                             cpt[(node.states[i],)] = float(node.probabilities[p][i])
                         # If it does not add the state of the variable to the existing states
                         else:
-                            cpt[p + (node.states[i],)] = float(node.probabilities[p][i])
-                else:
-                    # If the probability contains table then replace it with the state of var
-                    if p == "table":
-                        cpt[(node.states[i],)] = float(node.probabilities[p][i])
-                    # If it does not add the state of the variable to the existing states
-                    else:
-                        cpt[p + (node.states[i],)] = float(node.probabilities[p][i])
+                            cpt[tuple(key) + (node.states[i],)] = float(node.probabilities[p][i])
         # Return a new Factor
-        return Factor(variables, cpt)
+        return Factor(variables, cpt, pFor, e)
