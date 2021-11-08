@@ -63,7 +63,7 @@ class Main:
             print()
         x = ['Disease']
         e = {'LowerBodyO2': '<5', 'RUQO2': '>=12', 'CO2Report': '>=7.5', 'XrayReport': 'Asy/Patchy',
-             'GruntingReport': 'Yes', 'LVHReport': 'Yes', 'Age': '11-30 Days'}
+             'GruntingReport': 'yes', 'LVHReport': 'yes', 'Age': '11-30_days'}
         child_me = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=1000)
         print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
         print(str(child_me))
