@@ -11,14 +11,18 @@ class ApproximateInference:
         sample_list = []  # list of samples
         sample = copy.deepcopy(e)  # first sample, initialized with evidence
         frontier = []  # frontier nodes to explore
+        root_nodes = []
 
         # add root nodes to frontier
         for node in bnet.network.values():
             if len(node.parents) == 0:
-                frontier.append(node)  # add the nodes with no parents to the frontier
+                if node.name not in e:
+                    frontier.append(node)  # add the nodes with no parents to the frontier
+                    root_nodes.append(node)
+                else:
+                    [frontier.append(bnet.network[child]) for child in node.children]
 
         # sample root nodes
-        root_nodes = copy.copy(frontier)
         for node in root_nodes:
             sample, frontier = self.sample_node(node, bnet, sample, sample, frontier)
 
@@ -40,13 +44,18 @@ class ApproximateInference:
         for i in range(n - 1):
             sample = copy.deepcopy(e)
             frontier = []
+            root_nodes = []
             # add root nodes to frontier
             for node in bnet.network.values():
                 if len(node.parents) == 0:
-                    frontier.append(node)  # add the nodes with no parents to the current network level
+                    if node.name not in e:
+                        frontier.append(node)  # add the nodes with no parents to the frontier
+                        root_nodes.append(node)
+                    else:
+                        [frontier.append(bnet.network[child]) for child in node.children]
 
             # sample root nodes
-            for node in frontier:
+            for node in root_nodes:
                 sample, frontier = self.sample_node(node, bnet, sample, sample_list[i], frontier)
 
             # while there are nodes to sample
@@ -93,7 +102,8 @@ class ApproximateInference:
             if bnet.network[child] not in frontier:
                 frontier.append(bnet.network[child])  # add the child to the frontier
         frontier.remove(node)  # remove the sampled node from the frontier
-        for node in frontier:  # for each node in the frontier
+        frontier_nodes = copy.copy(frontier)  # create a copy of the frontier for iterating over
+        for node in frontier_nodes:  # for each node in the frontier
             if node.name in cur_sample:  # if the node has been sampled already
                 frontier.remove(node)  # remove it from the frontier
         return cur_sample, frontier  # return the updated sample and frontier
