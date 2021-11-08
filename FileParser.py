@@ -2,6 +2,7 @@ import re
 from BayesianNetwork import BayesianNetwork as BNet
 from BayesianNode import BayesianNode as BNode
 
+
 class FileParser:
     def __init__(self):
         self.bayesNet = BNet()
@@ -86,4 +87,3 @@ class FileParser:
                 start = block.find("(", end)
                 end = block.find(";\n", start)
         return probabilities
-
