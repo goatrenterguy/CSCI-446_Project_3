@@ -10,17 +10,17 @@ variable  dog-out {
 	type discrete[ 2 ] {  true,  false };
 }
 variable  hear-bark {
-	type discrete[ 2 ] {  true,  false };
+    type discrete[ 2 ] {  true,  false };
 }
 variable  family-out {
 	type discrete[ 2 ] {  true,  false };
 }
 probability ( light-on | family-out ) {
     (true) 0.6, 0.4;
-    (false) 0.05, 0.05;
+    (false) 0.05, 0.95;
 }
 probability ( bowel-problem ) {
-	table 0.01 0.99;
+    table 0.01 0.99;
 }
 probability ( dog-out | bowel-problem,  family-out ) {
     (true, true) 0.99, 0.01;
@@ -33,5 +33,5 @@ probability ( hear-bark | dog-out ) {
     (false) 0.01, 0.99;
 }
 probability ( family-out ) {
-	table 0.15 0.85;
+    table 0.15 0.85;
 }

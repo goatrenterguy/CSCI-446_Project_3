@@ -69,7 +69,7 @@ class FileParser:
     @staticmethod
     def parseProbabilityValues(block):
         probabilities = {}
-        if "table" in block:
+        if " table " in block:
             current = block[2:-3].replace(",", "").split()
             probabilities[current[0]] = current[1:]
         else:
