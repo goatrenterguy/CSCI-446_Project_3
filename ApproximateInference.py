@@ -105,7 +105,8 @@ class ApproximateInference:
                         count += 1  # count the times each state is observed
                 dist.append(str(state) + ": " + str(count / n))  # add the probability of observing the state to dist
             results.append(str(var) + ": " + str(dist))  # add the variable's distribution to the result set
-        print(self.count)
+            print(str(var) + ' count ' + str(self.count))
+            self.count = 0
         return results
 
     def sample_node(self, node: BayesianNode, bnet: BayesianNetwork, cur_sample, prev_sample, frontier):
