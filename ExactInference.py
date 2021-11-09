@@ -7,25 +7,36 @@ class ExactInference:
 
     def __init__(self):
         self.count = 0
+        self.demo = False
 
-    def eliminationAsk(self, X, e, BNet: BayesianNetwork):
+    def eliminationAsk(self, X, e, BNet: BayesianNetwork, demo=False):
         """
         Variable Elimination algorithm for exact inference
+        :param demo: Optional variable for setting demo mode
         :param X: A string that is the query
         :param e: A dictionary containg the evidence
         :param BNet: A Bayesian network
         :return: Returns the probability of X given the evidence
         """
+        self.demo = demo
         # Initialize a counter for steps in for loops
         factors = []
+        if demo:
+            print("Generating all factors")
         # Loop to create all factors
         for var in BNet.getVariables():
             factors.append(self.makeFactor(var, e, BNet))
             self.count += 1
+        if demo:
+            print("Elimination order: " + str(self.order(BNet.getVariables(), BNet)))
         # Loop to eliminate factors based on the order
         for var in self.order(BNet.getVariables(), BNet):
+            if demo:
+                print("Checking if " + var + " is in the query or evidence")
             # If var is equal to the query or is in the evidence do not sum out
             if var != X and var not in e:
+                if demo:
+                    print("\tEliminating" + var)
                 factors = self.sumOut(var, factors, BNet)
             self.count += 1
         # Do one final point wise product to consolidate remaining factors that contain the evidence and query
@@ -38,11 +49,14 @@ class ExactInference:
         finalFactor.cpt = cpt
         print("Major loop iterations: " + str(self.count))
         # Return the normalized form of the distribution
+        if demo:
+            print("Values before normalization:")
+            print("\t" + str(finalFactor.cpt))
         return self.normalize(finalFactor)
 
     def matchingVariables(self, f1, f2):
         """
-        Auxililary function to find the common indices between two factors
+        Auxiliary function to find the common indices between two factors
         :param f1: Factor 1
         :param f2: Factor 2
         :return: A list of indices for where f1 and f2 share a variable
@@ -71,6 +85,10 @@ class ExactInference:
             # Set the factors to merge
             f1 = factors[0]
             f2 = factors[1]
+            if self.demo:
+                print("Combining:")
+                print("\t" + str(f1))
+                print("\t" + str(f2))
             # Get the matching factors between f1 and f2
             matchingVariables = self.matchingVariables(f1, f2)
             # If they have matching variables and they arnt equal to each other
@@ -114,6 +132,9 @@ class ExactInference:
                             # Add the entry to CPT where the values were marginalized and calculate their value
                             cpt[tuple(key)] = f1.cpt[pf] * f2.cpt[po]
                 # Add the new factor to the end of factors so it can be marginalized against
+                if self.demo:
+                    print("Unified factor:")
+                    print("\t" + str(Factor(variables, cpt)))
                 factors.append(Factor(variables, cpt))
         # Return the single marginalized factor
         return Factor(factors[0].variables, factors[0].cpt)
@@ -134,10 +155,19 @@ class ExactInference:
                 varInFactor.append(f)
             else:
                 keep.append(f)
+        if self.demo:
+            print("Separating factors that contain " + var + " and those that do not")
+            print("\tFactors with " + var)
+            for x in factors:
+                print("\t\t" + str(x))
         # If there are any factors that contain var
         if len(varInFactor) > 0:
             # Calculate the point wise product for all the factors that
             factored = self.pointWiseProduct(varInFactor)
+            if self.demo:
+                print("Final unified factor:")
+                print("\t" + str(factored))
+                print("Summing out " + str(var))
             # Get index of var
             indexVar = factored.variables.index(var)
             cpt = {}
@@ -186,6 +216,9 @@ class ExactInference:
                             if count == nodeStates:
                                 break
             factored.variables.remove(var)
+            if self.demo:
+                print("Final summed out factor:")
+                print("\t" + str(Factor(factored.variables, cpt)))
             keep.append(Factor(factored.variables, cpt))
         return keep
 
