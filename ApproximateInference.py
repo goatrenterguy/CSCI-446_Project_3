@@ -11,16 +11,16 @@ class ApproximateInference:
         sample_list = []  # list of samples
         sample = copy.deepcopy(e)  # first sample, initialized with evidence
         frontier = []  # frontier nodes to explore
-        root_nodes = []
+        root_nodes = []  # set of root nodes for beginning the sample
 
         # add root nodes to frontier
         for node in bnet.network.values():
-            if len(node.parents) == 0:
-                if node.name not in e:
+            if len(node.parents) == 0:  # if the node is a root
+                if node.name not in e:  # if the node is not in the evidence
                     frontier.append(node)  # add the nodes with no parents to the frontier
-                    root_nodes.append(node)
-                else:
-                    [frontier.append(bnet.network[child]) for child in node.children]
+                    root_nodes.append(node)  # add the nodes with no parents to the root nodes
+                else:  # if the node is in the evidence
+                    [frontier.append(bnet.network[child]) for child in node.children]  # sample the node
 
         # sample root nodes
         for node in root_nodes:
@@ -47,12 +47,12 @@ class ApproximateInference:
             root_nodes = []
             # add root nodes to frontier
             for node in bnet.network.values():
-                if len(node.parents) == 0:
-                    if node.name not in e:
+                if len(node.parents) == 0:  # if the node is a root
+                    if node.name not in e:  # if the node is not in the evidence
                         frontier.append(node)  # add the nodes with no parents to the frontier
-                        root_nodes.append(node)
-                    else:
-                        [frontier.append(bnet.network[child]) for child in node.children]
+                        root_nodes.append(node)  # add the nodes to the root_node list too
+                    else:  # if the node is in the evidence
+                        [frontier.append(bnet.network[child]) for child in node.children]  # add children to frontier
 
             # sample root nodes
             for node in root_nodes:
