@@ -31,6 +31,19 @@ if __name__ == "__main__":
     print('------------ CHILD NETWORK ------------')
     BNet = FileParser().readFile('Networks/child.bif')
     x = ['Disease']
+    e = {}
+    child_le = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=1000)
+    print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
+    print(str(child_le))
+    print()
+    for X in x:
+        print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
+        factor = ExactInference().eliminationAsk(X, e, BNet)
+        print(factor.cpt)
+        print()
+
+    BNet = FileParser().readFile('Networks/child.bif')
+    x = ['Disease']
     e = {'LowerBodyO2': '<5', 'RUQO2': '>=12', 'CO2Report': '>=7.5', 'XrayReport': 'Asy/Patchy'}
     child_le = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=1000)
     print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
