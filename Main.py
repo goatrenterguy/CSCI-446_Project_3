@@ -2,32 +2,6 @@ from FileParser import FileParser
 from ExactInference import ExactInference
 from ApproximateInference import ApproximateInference
 
-if __name__ == "__main__":
-    print('------------ ALARM NETWORK ------------')
-    BNet = FileParser().readFile('Networks/alarm.bif')
-    x = ['HYPOVOLEMIA', 'LVFAILURE', 'ERRLOWOUTPUT']
-    e = {"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH"}
-    alarm_le = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=400, demo_flag=False)
-    print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
-    print(str(alarm_le))
-    print()
-    for X in x:
-        print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
-        factor = ExactInference().eliminationAsk(X, e, BNet)
-        print(factor.cpt)
-        print()
-    x = ['HYPOVOLEMIA', 'LVFAILURE', 'ERRLOWOUTPUT']
-    e = {"HRBP": "HIGH", "CO": "LOW", "BP": "HIGH", 'HRSAT': 'LOW', 'HREKG': 'LOW'}
-    alarm_me = ApproximateInference().gibbsAsk(X=x, e=e, bnet=BNet, n=400, demo_flag=False)
-    print('Approximate probabilities for ' + str(x) + ', given known evidence: ' + str(e))
-    print(str(alarm_me))
-    print()
-    for X in x:
-        print('Exact probabilities for ' + X + ', given known evidence ' + str(e))
-        factor = ExactInference().eliminationAsk(X, e, BNet)
-        print(factor.cpt)
-        print()
-
 class Main:
     def __init__(self):
         self.fileParser = FileParser()
