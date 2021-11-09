@@ -9,23 +9,46 @@ class FileParser:
         self.bif = ""
 
     def readFile(self, path):
+        """
+        Function for reading in a .bif file
+        :param path: Path to a .bif file
+        :return: Returns a bayesian network generated from the bif file
+        """
+        # Open the file
         with open(path, "r") as bif:
             self.bif = bif.read()
+        # Get the first block with network name and network properties
         networkBlock = self.getNetworkBlock()
+        # Set the name of the Bayesian network
         self.bayesNet.setName(networkBlock.split()[1])
+        # Get all variable blocks
         variableBlocks = self.getBlocks("variable")
+        # Get all probability blocks
         probabilityBlocks = self.getBlocks("probability")
+        # Parse the variable blocks
         self.parseVariables(variableBlocks)
+        # Parse the probability blocks
         self.parseProbabilities(probabilityBlocks)
+        # Return the Bayes net
         return self.bayesNet
 
     def getNetworkBlock(self):
+        """
+        Function to get the blocks for netowrks
+        :return: Name of the network
+        """
+        # Get the name of the network
         start = self.bif.index("network")
         end = self.bif.index("}\n") + 1
         networkString = self.bif[start:end]
         return networkString
 
     def getBlocks(self, blockType: str):
+        """
+        Parse input into blocks denoted by the type and ending with a }\n
+        :param blockType: Type of block to parse
+        :return: A list of all blocks of that type
+        """
         start = self.bif.index(blockType)
         end = self.bif.index("}\n", start) + 1
         blocks = []
@@ -36,6 +59,10 @@ class FileParser:
         return blocks
 
     def parseVariables(self, blocks):
+        """
+        Function to generate nodes from a variable block
+        :param blocks: String of for a block
+        """
         for block in blocks:
             start = block.index("type")
             end = block.index("};") + 1
@@ -43,11 +70,20 @@ class FileParser:
 
     @staticmethod
     def parseState(block):
+        """
+        Function to parse the states of a block
+        :param block:
+        :return:
+        """
         start = block.index("{") + 1
         end = block.index("}")
         return block[start:end].replace(",", "").split()
 
     def parseProbabilities(self, blocks):
+        """
+        Function to parse the probabilities for a given block
+        :param blocks: String representation of a block
+        """
         for block in blocks:
             # Parse variables for factor
             variables = list()
@@ -68,6 +104,11 @@ class FileParser:
 
     @staticmethod
     def parseProbabilityValues(block):
+        """
+        Function to parse the values of given probabilites
+        :param block: String representation of a block
+        :return: The probabilities for that block
+        """
         probabilities = {}
         if " table " in block:
             current = block[2:-3].replace(",", "").split()
