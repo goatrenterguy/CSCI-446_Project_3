@@ -7,10 +7,12 @@ class ExactInference:
 
     def __init__(self):
         self.count = 0
+        self.demo = False
 
-    def eliminationAsk(self, X, e, BNet: BayesianNetwork):
+    def eliminationAsk(self, X, e, BNet: BayesianNetwork, demo = False):
         """
         Variable Elimination algorithm for exact inference
+        :param demo:
         :param X: A string that is the query
         :param e: A dictionary containg the evidence
         :param BNet: A Bayesian network
@@ -36,7 +38,7 @@ class ExactInference:
             kl = [X for X in k]
             cpt[kl[indexVar]] = finalFactor.cpt[k]
         finalFactor.cpt = cpt
-        print(self.count)
+        print("Major loop iterations: " + str(self.count))
         # Return the normalized form of the distribution
         return self.normalize(finalFactor)
 
