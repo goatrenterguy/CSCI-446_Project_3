@@ -9,7 +9,7 @@ class ExactInference:
         self.count = 0
         self.demo = False
 
-    def eliminationAsk(self, X, e, BNet: BayesianNetwork, demo = False):
+    def eliminationAsk(self, X, e, BNet: BayesianNetwork):
         """
         Variable Elimination algorithm for exact inference
         :param demo:
