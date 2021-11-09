@@ -36,7 +36,7 @@ class ExactInference:
             kl = [X for X in k]
             cpt[kl[indexVar]] = finalFactor.cpt[k]
         finalFactor.cpt = cpt
-        print(self.count)
+        print("Major loop iterations: " + str(self.count))
         # Return the normalized form of the distribution
         return self.normalize(finalFactor)
 
