@@ -6,7 +6,7 @@ from BayesianNetwork import BayesianNetwork
 
 
 class ApproximateInference:
-    def gibbsAsk(self, X, e, bnet: BayesianNetwork, n):
+    def gibbsAsk(self, X, e, bnet: BayesianNetwork, n, demo_flag):
         # --- Create first sample ---
         sample_list = []  # list of samples
         sample = copy.deepcopy(e)  # first sample, initialized with evidence
@@ -71,6 +71,9 @@ class ApproximateInference:
 
             # save the sample
             sample_list.append(sample)
+        if demo_flag:
+            for s in sample_list:
+                print(s)
 
         # --- Combine sample values ---
         results = []
@@ -86,6 +89,7 @@ class ApproximateInference:
                         count += 1  # count the times each state is observed
                 dist.append(str(state) + ": " + str(count / n))  # add the probability of observing the state to dist
             results.append(str(var) + ": " + str(dist))  # add the variable's distribution to the result set
+
         return results
 
     def sample_node(self, node: BayesianNode, bnet: BayesianNetwork, cur_sample, prev_sample, frontier):
