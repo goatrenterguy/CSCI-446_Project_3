@@ -22,10 +22,10 @@ variable LVHreport {
   type discrete [ 2 ] { yes, no };
 }
 variable LowerBodyO2 {
-  type discrete [ 3 ] { <5, 5-12, 12+ };
+  type discrete [ 3 ] { <5, 5-12, >=12 };
 }
 variable RUQO2 {
-  type discrete [ 3 ] { <5, 5-12, 12+ };
+  type discrete [ 3 ] { <5, 5-12, >=12 };
 }
 variable CO2Report {
   type discrete [ 2 ] { <7.5, >=7.5 };
