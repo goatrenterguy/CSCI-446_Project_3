@@ -5,6 +5,9 @@ from BayesianNetwork import BayesianNetwork
 
 class ExactInference:
 
+    def __init__(self):
+        self.count = 0
+
     def eliminationAsk(self, X, e, BNet: BayesianNetwork):
         """
         Variable Elimination algorithm for exact inference
@@ -13,15 +16,18 @@ class ExactInference:
         :param BNet: A Bayesian network
         :return: Returns the probability of X given the evidence
         """
+        # Initialize a counter for steps in for loops
         factors = []
         # Loop to create all factors
         for var in BNet.getVariables():
             factors.append(self.makeFactor(var, e, BNet))
+            self.count += 1
         # Loop to eliminate factors based on the order
         for var in self.order(BNet.getVariables(), BNet):
             # If var is equal to the query or is in the evidence do not sum out
             if var != X and var not in e:
                 factors = self.sumOut(var, factors, BNet)
+            self.count += 1
         # Do one final point wise product to consolidate remaining factors that contain the evidence and query
         finalFactor = self.pointWiseProduct(factors)
         cpt = {}
@@ -30,6 +36,7 @@ class ExactInference:
             kl = [X for X in k]
             cpt[kl[indexVar]] = finalFactor.cpt[k]
         finalFactor.cpt = cpt
+        print(self.count)
         # Return the normalized form of the distribution
         return self.normalize(finalFactor)
 
@@ -43,6 +50,7 @@ class ExactInference:
         matchingVariables = []
         # Loop through f1's variables
         for fv in range(len(f1.variables)):
+            self.count += 1
             # Loop through f2's variables
             for ov in range(len(f2.variables)):
                 # If they are equal then add the indices to matchingVariables
@@ -59,6 +67,7 @@ class ExactInference:
         """
         # While there are more than one factors
         while len(factors) > 1:
+            self.count += 1
             # Set the factors to merge
             f1 = factors[0]
             f2 = factors[1]
@@ -138,10 +147,12 @@ class ExactInference:
             nodeStates = len(BNet.getNode(var).states)
             # Iterate through the range of keys
             for k1i in range(len(keys)):
+                self.count += 1
                 # Initialize a counter
                 count = 0
                 # Iterate through the rest of keys
                 for k2i in range(k1i, len(keys)):
+                    self.count += 1
                     # Get the keys for each index
                     k1 = keys[k1i]
                     k2 = keys[k2i]
@@ -200,6 +211,7 @@ class ExactInference:
         """
         numChildren = []
         for v in variables:
+            self.count += 1
             numChildren.append([v, len(BNet.getNode(v).children)])
         # Sort by the number of children
         numChildren.sort(key=lambda x: x[1], reverse=False)
@@ -230,8 +242,10 @@ class ExactInference:
                 ignore.append(v)
         # Iterate through the list of probabilities
         for p in node.probabilities:
+            self.count += 1
             # Iterate through the number of states
             for i in range(len(node.states)):
+                self.count += 1
                 key = [X for X in p]
                 take = True
                 for v in ignore:
