@@ -3,19 +3,9 @@ from ExactInference import ExactInference
 from ApproximateInference import ApproximateInference
 
 class Main:
-    def __init__(self):
-        self.fileParser = FileParser()
-        self.selectionKey = {
-            "A": "Alarm",
-            "C": "Child",
-            "H": "Hailfinder",
-            "I": "Insurance",
-            "W": "Win95pts"
-        }
-
     def experiment(self):
         print('------------ ALARM NETWORK ------------')
-        BNet = self.fileParser.readFile('Networks/alarm.bif')
+        BNet = FileParser().readFile('Networks/alarm.bif')
         x = ['HYPOVOLEMIA', 'LVFAILURE', 'ERRLOWOUTPUT']
 
         # No evidence
@@ -55,7 +45,7 @@ class Main:
             print()
 
         print('------------ CHILD NETWORK ------------')
-        BNet = self.fileParser.readFile('Networks/child.bif')
+        BNet = FileParser().readFile('Networks/child.bif')
         x = ['Disease']
         # No evidence
         e = {}
@@ -115,7 +105,7 @@ class Main:
             print()
 
             print('------------ HAILFINDER NETWORK ------------')
-            BNet = self.fileParser.readFile('Networks/hailfinder.bif')
+            BNet = FileParser().readFile('Networks/hailfinder.bif')
             x = ['SatContMoist', 'LLIW']
 
             # No evidence
@@ -177,7 +167,7 @@ class Main:
                 print()
 
                 print('------------ INSURANCE NETWORK ------------')
-                BNet = self.fileParser.readFile('Networks/insurance.bif')
+                BNet = FileParser().readFile('Networks/insurance.bif')
                 x = ['MedCost', 'ILiCost', 'PropCost']
 
                 # No evidence
@@ -238,7 +228,7 @@ class Main:
                 print()
 
                 print('------------ Win95 NETWORK ------------')
-                BNet = self.fileParser.readFile('Networks/win95pts.bif')
+                BNet = FileParser().readFile('Networks/win95pts.bif')
                 x = ['Problem1', 'Problem2', 'Problem3', 'Problem4', 'Problem5', 'Problem6']
 
                 # No evidence
@@ -321,7 +311,7 @@ class Main:
 
     def demo(self):
         print('------------ ALARM NETWORK ------------')
-        BNet = self.fileParser.readFile('Networks/alarm.bif')
+        BNet = FileParser().readFile('Networks/alarm.bif')
         x = ['HYPOVOLEMIA', 'LVFAILURE', 'ERRLOWOUTPUT']
 
         # No evidence
